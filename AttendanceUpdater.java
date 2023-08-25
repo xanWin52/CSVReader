@@ -36,6 +36,7 @@ public class AttendanceUpdater {
         signIn.readLine();
         while((line = signIn.readLine()) != null){
             String[] entry = line.split(",");
+            System.out.println(entry.toString());
             for(int i = 5; i < att.size(); i ++){
                 att.get(i).add("Test");
             }
