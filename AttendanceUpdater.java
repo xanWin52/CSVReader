@@ -39,33 +39,40 @@ public class AttendanceUpdater {
         String line;
         signIn.readLine();
         ArrayList<Integer> unfinishedIndexes = new ArrayList<Integer>();
+        ArrayList<Integer> updatedIndexes = new ArrayList<Integer>();
         while((line = signIn.readLine()) != null){
             String[] entry = line.split(",");
             String[] timestamp = entry[0].split(" ");
             for(int i = 5; i < att.size(); i ++){
                 if((att.get(i).get(0).toLowerCase().equals(entry[2].toLowerCase()) && att.get(i).get(1).toLowerCase().equals(entry[1].toLowerCase())) || (att.get(i).get(0).toLowerCase().equals(entry[1].toLowerCase()) && att.get(i).get(1).toLowerCase().equals(entry[2].toLowerCase()))){
-                    if(att.get(i).size() == length){
-                        att.get(i).add(timestamp[1]);
-                        unfinishedIndexes.add(i);
-                    } else {
-                        unfinishedIndexes.remove(unfinishedIndexes.indexOf(i));
+                    if(unfinishedIndexes.contains(i)){
                         try{
                             Date time1 = format.parse(att.get(i).get(length));
                             Date time2 = format.parse(timestamp[1].trim());
                             att.get(i).set(length, convertToHours(Math.abs(time1.getTime() - time2.getTime())));
+                            unfinishedIndexes.remove(unfinishedIndexes.indexOf(i));
                         } catch (Exception e){
                             System.out.println(e);
                         }
+                    } else {
+                        att.get(i).add(timestamp[1]);
+                        unfinishedIndexes.add(i);
+                        updatedIndexes.add(i);
                     }
                     break;
                 }
             }
             
         }
-        // for(int i : unfinishedIndexes){
-        //     att.get(i).set(att.get(i).size()-1,"1");
-        //     System.out.println(i);
-        // }
+        for(int i = 5; i < att.size(); i ++){
+            if(!updatedIndexes.contains(i)){
+                att.get(i).add("0");
+            }
+        }
+        for(int i : unfinishedIndexes){
+            att.get(i).set(att.get(i).size()-1,"1");
+            System.out.println(i);
+        }
         signIn.close();
         return att;
     }
