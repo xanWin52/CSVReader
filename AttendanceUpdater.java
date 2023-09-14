@@ -11,10 +11,10 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 
 public class AttendanceUpdater {
-    public static void main(String[] args) throws IOException{
-
+    public static void main(String[] args) throws IOException{  
         BufferedReader attendance = new BufferedReader(new FileReader("Test Attendance.csv"));
         BufferedWriter result = new BufferedWriter(new FileWriter("Result.csv"));
+        BufferedReader signIn = new BufferedReader(new FileReader("Test Event Sign In.csv"));
 
         String line;
         ArrayList<ArrayList<String>> newAtt = new ArrayList<ArrayList<String>>();
@@ -22,7 +22,7 @@ public class AttendanceUpdater {
             ArrayList<String> lineTemp = new ArrayList<>(Arrays.asList(line.split(",")));
             newAtt.add(lineTemp);
         }
-        newAtt = addEvent(newAtt,"Test");
+        newAtt = addEvent(newAtt, signIn,"Test");
         for(List<String> x : newAtt){
             result.write(x.toString());
             result.write("\n");
@@ -31,9 +31,8 @@ public class AttendanceUpdater {
         result.close();
     }    
 
-    public static ArrayList<ArrayList<String>> addEvent(ArrayList<ArrayList<String>> att, String title)throws IOException{
+    public static ArrayList<ArrayList<String>> addEvent(ArrayList<ArrayList<String>> att, BufferedReader signIn, String title)throws IOException{
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
-        BufferedReader signIn = new BufferedReader(new FileReader("Test Event Sign In.csv"));
         int length = att.get(5).size();
         att.get(1).add(title);
         String line;
