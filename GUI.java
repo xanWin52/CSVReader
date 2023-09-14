@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 public class GUI {
     public static void main(String[] args) {
@@ -15,6 +16,14 @@ public class GUI {
         panel.add(tf);
         panel.add(done);
         frame.getContentPane().add(BorderLayout.SOUTH, panel);
+
+        JButton attendance = new JButton("Attendance File");
+        attendance.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e){
+                
+            }
+        });
 
         frame.setVisible(true);
     }
