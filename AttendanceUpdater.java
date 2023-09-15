@@ -2,11 +2,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException; 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
@@ -17,36 +14,40 @@ public class AttendanceUpdater {
         JFileChooser open = new JFileChooser();
         int option = open.showOpenDialog(null);
         BufferedReader attendance = null;
-        BufferedWriter result = new BufferedWriter(new FileWriter("Result.csv"));
-        BufferedReader signIn = new BufferedReader(new FileReader("Test Event Sign In.csv"));
+        BufferedReader signIn = null;
+        String attPath = "";
         if(option == JFileChooser.APPROVE_OPTION){
             try{
                 attendance = new BufferedReader(new FileReader(open.getSelectedFile().getPath()));
+                attPath = open.getSelectedFile().getPath();
             } catch (Exception e){
                 System.out.println(e);
             }
         }
-        
-        if(attendance == null){
-            System.out.println("attendance is null");
-            System.exit(0);
-        } else if(signIn == null){
-            System.out.println("Sign-in is null");
-            System.exit(0);
+        option = 0;
+        option = open.showOpenDialog(null);
+        if(option == JFileChooser.APPROVE_OPTION){
+            try{
+                signIn = new BufferedReader(new FileReader(open.getSelectedFile().getPath()));
+            } catch (Exception e){
+                System.out.println(e);
+            }
         }
-        String line;
-        ArrayList<ArrayList<String>> newAtt = new ArrayList<ArrayList<String>>();
-        while((line = attendance.readLine())!= null){
-            ArrayList<String> lineTemp = new ArrayList<>(Arrays.asList(line.split(",")));
-            newAtt.add(lineTemp);
-        }
-        newAtt = addEvent(newAtt, signIn,"Test");
-        for(List<String> x : newAtt){
-            result.write(x.toString());
-            result.write("\n");
+        if(signIn != null && attendance!= null){
+            String line;
+            ArrayList<ArrayList<String>> newAtt = new ArrayList<ArrayList<String>>();
+            while((line = attendance.readLine())!= null){
+                ArrayList<String> lineTemp = new ArrayList<>(Arrays.asList(line.split(",")));
+                newAtt.add(lineTemp);
+            }
+            newAtt = addEvent(newAtt, signIn,"Test");
+            String text = getString(newAtt);
+            FileWriter att = new FileWriter(attPath);
+            att.write(text);
+            att.close();
         }
         attendance.close();
-        result.close();
+        signIn.close();
     }    
 
     public static ArrayList<ArrayList<String>> addEvent(ArrayList<ArrayList<String>> att, BufferedReader signIn, String title)throws IOException{
@@ -88,7 +89,6 @@ public class AttendanceUpdater {
         }
         for(int i : unfinishedIndexes){
             att.get(i).set(att.get(i).size()-1,"1");
-            System.out.println(i);
         }
         signIn.close();
         return att;
@@ -103,5 +103,15 @@ public class AttendanceUpdater {
         }
 
         return Long.toString(hrs);
+    }
+    
+    public static String getString(ArrayList<ArrayList<String>> arr){
+        String res = "";
+        for(ArrayList<String> x : arr){
+            String temp = x.toString();
+            temp = temp.substring(1,temp.length() - 1) + "\n";
+            res += temp;
+        }
+        return res;
     }
 }
