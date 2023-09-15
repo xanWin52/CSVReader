@@ -10,12 +10,30 @@ import java.util.List;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
+import javax.swing.*;
+
 public class AttendanceUpdater {
     public static void main(String[] args) throws IOException{  
-        BufferedReader attendance = new BufferedReader(new FileReader("Test Attendance.csv"));
+        JFileChooser open = new JFileChooser();
+        int option = open.showOpenDialog(null);
+        BufferedReader attendance = null;
         BufferedWriter result = new BufferedWriter(new FileWriter("Result.csv"));
         BufferedReader signIn = new BufferedReader(new FileReader("Test Event Sign In.csv"));
-
+        if(option == JFileChooser.APPROVE_OPTION){
+            try{
+                attendance = new BufferedReader(new FileReader(open.getSelectedFile().getPath()));
+            } catch (Exception e){
+                System.out.println(e);
+            }
+        }
+        
+        if(attendance == null){
+            System.out.println("attendance is null");
+            System.exit(0);
+        } else if(signIn == null){
+            System.out.println("Sign-in is null");
+            System.exit(0);
+        }
         String line;
         ArrayList<ArrayList<String>> newAtt = new ArrayList<ArrayList<String>>();
         while((line = attendance.readLine())!= null){
